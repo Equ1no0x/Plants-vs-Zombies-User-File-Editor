@@ -9,11 +9,12 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Plants_vs.Zombies_user_file_editor</RootNamespace>
-    <AssemblyName>Plants_vs.Zombies_user_file_editor</AssemblyName>
+    <AssemblyName>PlantsVsZombies_UserFileEditor</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
+    <ApplicationIcon>256px-Fiore_01.svg.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>

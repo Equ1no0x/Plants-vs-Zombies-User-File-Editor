@@ -7,7 +7,7 @@ namespace Plants_vs.Zombies_user_file_editor
     // A BoolPreserveNonzero represents a boolean value using an Int32, with zero representing false,
     // and true represented by some nonzero value. If the original value is false, true will be represented
     // by 1, otherwise it will be represented by its original value. This helps with compatibility with
-    // future versions of a file format.
+    // other versions of a file format.
     class BoolPreserveNonzero
     {
         private int origIntValue;

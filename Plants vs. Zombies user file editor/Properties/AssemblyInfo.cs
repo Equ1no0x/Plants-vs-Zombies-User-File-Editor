@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Plants vs. Zombies user file editor")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Plants vs. Zombies User File Editor")]
+[assembly: AssemblyDescription("Plants vs. Zombies User File Editor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Plants vs. Zombies user file editor")]
+[assembly: AssemblyProduct("Plants vs. Zombies User File Editor")]
 [assembly: AssemblyCopyright("Copyright ©  2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.0.2.1")]
+[assembly: AssemblyFileVersion("0.0.2.1")]

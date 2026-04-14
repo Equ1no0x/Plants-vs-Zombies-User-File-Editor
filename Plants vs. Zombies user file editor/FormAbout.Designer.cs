@@ -47,7 +47,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(255, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Plants vs. Zombies user file editor v0.1 (2012/12/29)";
+            this.label1.Text = "Plants vs. Zombies User File Editor v0.2.1 (2026/04/14)";
             // 
             // pictureBox1
             // 
@@ -62,7 +62,7 @@
             // buttonOK
             // 
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(125, 389);
+            this.buttonOK.Location = new System.Drawing.Point(125, 409);
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.Size = new System.Drawing.Size(75, 23);
             this.buttonOK.TabIndex = 2;
@@ -72,7 +72,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 187);
+            this.label2.Location = new System.Drawing.Point(12, 209);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(198, 13);
             this.label2.TabIndex = 3;
@@ -86,14 +86,16 @@
             this.label3.Size = new System.Drawing.Size(137, 13);
             this.label3.TabIndex = 4;
             this.label3.Text = "Created by Derrick Coetzee";
+            this.label3.Size = new System.Drawing.Size(137, 13);
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 227);
+            this.label4.Location = new System.Drawing.Point(12, 187);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(0, 13);
+            this.label4.Size = new System.Drawing.Size(93, 13);
             this.label4.TabIndex = 5;
+            this.label4.Text = "Updated by Nox";
             // 
             // label5
             // 
@@ -105,7 +107,7 @@
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(18, 214);
+            this.richTextBox1.Location = new System.Drawing.Point(18, 230);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.Size = new System.Drawing.Size(304, 169);
             this.richTextBox1.TabIndex = 7;
@@ -117,7 +119,7 @@
             this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(334, 420);
+            this.ClientSize = new System.Drawing.Size(334, 440);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);

@@ -65,6 +65,8 @@ namespace Plants_vs.Zombies_user_file_editor
         private uint[] unknown9 = new uint[3];
         public ZenGardenPlant[] ZenGardenPlants;
         public BoolPreserveNonzero[] HasAchievement = new BoolPreserveNonzero[20];
+        public byte ZombatarLicense;
+        public int NumberOfZombatars;
         public BoolPreserveNonzero AcceptedZombatarLicenseAgreement;
         public Zombatar[] Zombatars;
         private uint[] unknown10 = new uint[5];
@@ -91,103 +93,206 @@ namespace Plants_vs.Zombies_user_file_editor
         {
             this.Name = name;
             this.UserFilePath = filePath;
+            
+            // Initialize all BoolPreserveNonzero array elements to avoid null reference exceptions
+            for (int i = 0; i < HasMinigameTrophy.Length; i++)
+                HasMinigameTrophy[i] = new BoolPreserveNonzero(0);
+            for (int i = 0; i < HasVaseBreakerTrophy.Length; i++)
+                HasVaseBreakerTrophy[i] = new BoolPreserveNonzero(0);
+            for (int i = 0; i < HasIZombieTrophy.Length; i++)
+                HasIZombieTrophy[i] = new BoolPreserveNonzero(0);
+            for (int i = 0; i < HasShopPlant.Length; i++)
+                HasShopPlant[i] = new BoolPreserveNonzero(0);
+            for (int i = 0; i < HasAchievement.Length; i++)
+                HasAchievement[i] = new BoolPreserveNonzero(0);
+            
+            // Initialize all scalar BoolPreserveNonzero fields
+            HasGoldenWateringCan = new BoolPreserveNonzero(0);
+            HasPhonograph = new BoolPreserveNonzero(0);
+            HasGardeningGlove = new BoolPreserveNonzero(0);
+            HasMushroomGarden = new BoolPreserveNonzero(0);
+            HasWheelbarrow = new BoolPreserveNonzero(0);
+            HasPoolCleaners = new BoolPreserveNonzero(0);
+            HasRoofCleaners = new BoolPreserveNonzero(0);
+            HasAquariumGarden = new BoolPreserveNonzero(0);
+            TreeOfWisdomAvailable = new BoolPreserveNonzero(0);
+            HasWallNutFirstAid = new BoolPreserveNonzero(0);
+            MiniGamesUnlocked = new BoolPreserveNonzero(0);
+            PuzzleModeUnlocked = new BoolPreserveNonzero(0);
+            AnimateUnlockMiniGame = new BoolPreserveNonzero(0);
+            AnimateUnlockVasebreaker = new BoolPreserveNonzero(0);
+            AnimateUnlockIZombie = new BoolPreserveNonzero(0);
+            AnimateUnlockSurvival = new BoolPreserveNonzero(0);
+            ShowAdventureCompleteDialog = new BoolPreserveNonzero(0);
+            HasTaco = new BoolPreserveNonzero(0);
+            AcceptedZombatarLicenseAgreement = new BoolPreserveNonzero(0);
+            HaveCreatedZombatar = new BoolPreserveNonzero(0);
+            
+            // Initialize other fields
+            ZombatarLicense = 0;
+            NumberOfZombatars = 0;
+            ZenGardenPlants = new ZenGardenPlant[0];
+            Zombatars = new Zombatar[0];
+            trailingData = new byte[0];
         }
 
         public void Load(bool forceReadIncompatibleVersion)
         {
             using (var reader = new BinaryReader(new FileStream(UserFilePath, FileMode.Open, FileAccess.Read)))
             {
-                var version = reader.ReadUInt32();
-                if (version != 0x0C && !forceReadIncompatibleVersion)
+                try
                 {
-                    throw new IncompatibleVersionException();
+                    var version = reader.ReadUInt32();
+                    if (version != 0x0C && !forceReadIncompatibleVersion)
+                    {
+                        throw new IncompatibleVersionException();
+                    }
+                    Level.Read(reader);
+                    moneyOver10 = reader.ReadInt32();
+                    NumTimesAdventureModeCompleted = reader.ReadInt32();
+
+                    System.Diagnostics.Debug.WriteLine($"Position after NumTimesAdventureModeCompleted: {reader.BaseStream.Position}");
+                    IOUtils.ReadInt32Array(reader, SurvivalModeFlags);
+                    System.Diagnostics.Debug.WriteLine($"Position after SurvivalModeFlags: {reader.BaseStream.Position}");
+
+                    IOUtils.ReadUInt32Array(reader, unknown1);
+                    StreakLengthEndlessSurvival = reader.ReadInt32();
+
+                    IOUtils.ReadUInt32Array(reader, unknown2);
+
+                    IOUtils.ReadBoolPreserveNonzeroArray(reader, HasMinigameTrophy, 4);
+                    IOUtils.ReadUInt32Array(reader, unknown3);
+                    TreeOfWisdomHeight = reader.ReadInt32();
+                    IOUtils.ReadBoolPreserveNonzeroArray(reader, HasVaseBreakerTrophy, 4);
+                    StreakLengthVaseBreakerEndless = reader.ReadInt32();
+                    IOUtils.ReadBoolPreserveNonzeroArray(reader, HasIZombieTrophy, 4);
+                    StreakLengthIZombieEndless = reader.ReadInt32();
+
+                    System.Diagnostics.Debug.WriteLine($"Position after StreakLengthIZombieEndless: {reader.BaseStream.Position}");
+                    IOUtils.ReadUInt32Array(reader, unknown4);
+                    System.Diagnostics.Debug.WriteLine($"Position after unknown4: {reader.BaseStream.Position}");
+
+                    IOUtils.ReadBoolPreserveNonzeroArray(reader, HasShopPlant, 4);
+                    unknown5 = reader.ReadUInt32();
+                    System.Diagnostics.Debug.WriteLine($"Position after unknown5: {reader.BaseStream.Position}");
+                    for (int i = 0; i < MarigoldLastPurchased.Length; i++)
+                    {
+                        MarigoldLastPurchased[i] = IOUtils.ReadDaysSince2000(reader);
+                    }
+                    System.Diagnostics.Debug.WriteLine($"Position after MarigoldLastPurchased: {reader.BaseStream.Position}");
+                    HasGoldenWateringCan = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    FertilizerAmount = IOUtils.ReadInt32Offset(reader, 1000);
+                    BugSprayAmount = IOUtils.ReadInt32Offset(reader, 1000);
+                    HasPhonograph = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    HasGardeningGlove = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    HasMushroomGarden = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    HasWheelbarrow = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    StinkyLastAwokenTime = IOUtils.ReadUnixTimestamp(reader);
+                    NumberSlots = reader.ReadInt32() + 6;
+                    System.Diagnostics.Debug.WriteLine($"Position after NumberSlots: {reader.BaseStream.Position}");
+                    HasPoolCleaners = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    HasRoofCleaners = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    RakeUses = reader.ReadUInt32();
+                    HasAquariumGarden = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    ChocolateAmount = IOUtils.ReadInt32Offset(reader, 1000);
+                    TreeOfWisdomAvailable = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    TreeFoodAmount = IOUtils.ReadInt32Offset(reader, 1000);
+                    HasWallNutFirstAid = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    IOUtils.ReadUInt32Array(reader, unknown6);
+                    System.Diagnostics.Debug.WriteLine($"Position after unknown6: {reader.BaseStream.Position}");
+                    unknown7 = reader.ReadUInt32();
+                    StinkyLastChocolateTime = IOUtils.ReadUnixTimestamp(reader);
+                    System.Diagnostics.Debug.WriteLine($"Position after StinkyLastChocolateTime: {reader.BaseStream.Position}");
+                    StinkyXPosition = reader.ReadInt32();
+                    StinkyYPosition = reader.ReadInt32();
+                    MiniGamesUnlocked = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    PuzzleModeUnlocked = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    AnimateUnlockMiniGame = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    AnimateUnlockVasebreaker = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    AnimateUnlockIZombie = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    AnimateUnlockSurvival = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    unknown8 = reader.ReadUInt32();
+                    ShowAdventureCompleteDialog = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+                    HasTaco = IOUtils.ReadBoolPreserveNonzero(reader, 4);
+
+                    IOUtils.ReadUInt32Array(reader, unknown9);
+
+                    // Try to read optional/variable-length data
+                    try
+                    {
+                        // Zen Garden plant count should be at file offset 0x330
+                        // Seek there explicitly to handle any alignment issues
+                        reader.BaseStream.Seek(0x330, System.IO.SeekOrigin.Begin);
+                        
+                        var numZenGardenPlants = reader.ReadUInt32();
+                        
+                        // Sanity check: file can only have so many plants, limit to 1000
+                        if (numZenGardenPlants > 1000)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Rejecting unrealistic plant count: {numZenGardenPlants}. File likely truncated.");
+                            throw new Exception($"Invalid plant count {numZenGardenPlants}");
+                        }
+                        
+                        var plantList = new System.Collections.Generic.List<ZenGardenPlant>();
+                        for (int i = 0; i < numZenGardenPlants; i++)
+                        {
+                            try
+                            {
+                                var plant = new ZenGardenPlant();
+                                plant.Load(reader);
+                                plantList.Add(plant);
+                            }
+                            catch (Exception plantEx)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Error loading plant {i}: {plantEx.Message}");
+                                // Stop loading on fatal errors
+                                break;
+                            }
+                        }
+                        ZenGardenPlants = plantList.ToArray();
+
+                        IOUtils.ReadBoolPreserveNonzeroArray(reader, HasAchievement, 2);
+
+                        ZombatarLicense = reader.ReadByte();
+                        NumberOfZombatars = reader.ReadInt32();
+                        AcceptedZombatarLicenseAgreement = IOUtils.ReadBoolPreserveNonzero(reader, 1);
+                        System.Diagnostics.Debug.WriteLine($"Position before Zombatars read: {reader.BaseStream.Position}");
+                        var numZombatars = reader.ReadUInt32();
+                        System.Diagnostics.Debug.WriteLine($"Zombatars count: {numZombatars}, Position: {reader.BaseStream.Position}");
+                        Zombatars = new Zombatar[numZombatars];
+                        for (int i = 0; i < Zombatars.Length; i++)
+                        {
+                            Zombatars[i] = new Zombatar();
+                            Zombatars[i].Load(reader);
+                            System.Diagnostics.Debug.WriteLine($"  After Zombatar[{i}]: Position: {reader.BaseStream.Position}");
+                        }
+
+                        IOUtils.ReadUInt32Array(reader, unknown10);
+
+                        HaveCreatedZombatar = IOUtils.ReadBoolPreserveNonzero(reader, 1);
+                        System.Diagnostics.Debug.WriteLine($"Position before trailing data read: {reader.BaseStream.Position}");
+
+                        // Read all trailing data into a buffer - if we're dealing with an incompatible version this might let us succeed
+                        // Warning: this might allocate a lot of memory if the file is huge for some reason 
+                        long remainingBytes = new FileInfo(UserFilePath).Length - reader.BaseStream.Position;
+                        System.Diagnostics.Debug.WriteLine($"Remaining bytes: {remainingBytes}");
+                        trailingData = reader.ReadBytes((int)remainingBytes);
+                        System.Diagnostics.Debug.WriteLine($"Successfully loaded file");
+                    }
+                    catch (EndOfStreamException)
+                    {
+                        // File is truncated - initialize remaining fields with defaults
+                        // But preserve the plants we already loaded successfully
+                        System.Diagnostics.Debug.WriteLine($"File truncated at position {reader.BaseStream.Position}. Initializing remaining fields with defaults.");
+                        // Don't reset ZenGardenPlants - we already loaded them successfully
+                        Zombatars = new Zombatar[0];
+                        trailingData = new byte[0];
+                    }
                 }
-                Level.Read(reader);
-                moneyOver10 = reader.ReadInt32();
-                NumTimesAdventureModeCompleted = reader.ReadInt32();
-
-                IOUtils.ReadInt32Array(reader, SurvivalModeFlags);
-                IOUtils.ReadUInt32Array(reader, unknown1);
-                StreakLengthEndlessSurvival = reader.ReadInt32();
-
-                IOUtils.ReadUInt32Array(reader, unknown2);
-
-                IOUtils.ReadBoolPreserveNonzeroArray(reader, HasMinigameTrophy, 4);
-                IOUtils.ReadUInt32Array(reader, unknown3);
-                TreeOfWisdomHeight = reader.ReadInt32();
-                IOUtils.ReadBoolPreserveNonzeroArray(reader, HasVaseBreakerTrophy, 4);
-                StreakLengthVaseBreakerEndless = reader.ReadInt32();
-                IOUtils.ReadBoolPreserveNonzeroArray(reader, HasIZombieTrophy, 4);
-                StreakLengthIZombieEndless = reader.ReadInt32();
-
-                IOUtils.ReadUInt32Array(reader, unknown4);
-
-                IOUtils.ReadBoolPreserveNonzeroArray(reader, HasShopPlant, 4);
-                unknown5 = reader.ReadUInt32();
-                for (int i=0; i < MarigoldLastPurchased.Length; i++)
+                catch (EndOfStreamException ex)
                 {
-                    MarigoldLastPurchased[i] = IOUtils.ReadDaysSince2000(reader);
+                    throw new Exception($"File truncated while reading at position {reader.BaseStream.Position}. File size: {new FileInfo(UserFilePath).Length} bytes. {ex.Message}", ex);
                 }
-                HasGoldenWateringCan = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                FertilizerAmount = IOUtils.ReadInt32Offset(reader, 1000);
-                BugSprayAmount = IOUtils.ReadInt32Offset(reader, 1000);
-                HasPhonograph = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                HasGardeningGlove = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                HasMushroomGarden = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                HasWheelbarrow = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                StinkyLastAwokenTime = IOUtils.ReadUnixTimestamp(reader);
-                NumberSlots = reader.ReadInt32() + 6;
-                HasPoolCleaners = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                HasRoofCleaners = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                RakeUses = reader.ReadUInt32();
-                HasAquariumGarden = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                ChocolateAmount = IOUtils.ReadInt32Offset(reader, 1000);
-                TreeOfWisdomAvailable = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                TreeFoodAmount = IOUtils.ReadInt32Offset(reader, 1000);
-                HasWallNutFirstAid = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                IOUtils.ReadUInt32Array(reader, unknown6);
-                unknown7 = reader.ReadUInt32();
-                StinkyLastChocolateTime = IOUtils.ReadUnixTimestamp(reader);
-                StinkyXPosition = reader.ReadInt32();
-                StinkyYPosition = reader.ReadInt32();
-                MiniGamesUnlocked = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                PuzzleModeUnlocked = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                AnimateUnlockMiniGame = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                AnimateUnlockVasebreaker = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                AnimateUnlockIZombie = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                AnimateUnlockSurvival = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                unknown8 = reader.ReadUInt32();
-                ShowAdventureCompleteDialog = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-                HasTaco = IOUtils.ReadBoolPreserveNonzero(reader, 4);
-
-                IOUtils.ReadUInt32Array(reader, unknown9);
-
-                var numZenGardenPlants = reader.ReadUInt32();
-                ZenGardenPlants = new ZenGardenPlant[numZenGardenPlants];
-                for (int i = 0; i < ZenGardenPlants.Length; i++)
-                {
-                    ZenGardenPlants[i] = new ZenGardenPlant();
-                    ZenGardenPlants[i].Load(reader);
-                }
-
-                IOUtils.ReadBoolPreserveNonzeroArray(reader, HasAchievement, 2);
-                
-                AcceptedZombatarLicenseAgreement = IOUtils.ReadBoolPreserveNonzero(reader, 1);
-                var numZombatars = reader.ReadUInt32();
-                Zombatars = new Zombatar[numZombatars];
-                for (int i = 0; i < Zombatars.Length; i++)
-                {
-                    Zombatars[i] = new Zombatar();
-                    Zombatars[i].Load(reader);
-                }
-
-                IOUtils.ReadUInt32Array(reader, unknown10);
-
-                HaveCreatedZombatar = IOUtils.ReadBoolPreserveNonzero(reader, 1);
-
-                // Read all trailing data into a buffer - if we're dealing with an incompatible version this might let us succeed
-                // Warning: this might allocate a lot of memory if the file is huge for some reason 
-                trailingData = reader.ReadBytes((int)new FileInfo(UserFilePath).Length);
             }
         }
 
@@ -262,6 +367,8 @@ namespace Plants_vs.Zombies_user_file_editor
 
                 IOUtils.WriteBoolPreserveNonzeroArray(writer, HasAchievement, 2);
 
+                writer.Write(ZombatarLicense);
+                writer.Write(NumberOfZombatars);
                 IOUtils.WriteBoolPreserveNonzero(writer, AcceptedZombatarLicenseAgreement, 1);
                 writer.Write(Zombatars.Length);
                 for (int i = 0; i < Zombatars.Length; i++)

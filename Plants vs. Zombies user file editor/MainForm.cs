@@ -301,8 +301,32 @@ namespace Plants_vs.Zombies_user_file_editor
             numericUpDownStinkyX.Value = user.StinkyXPosition;
             numericUpDownStinkyY.Value = user.StinkyYPosition;
 
+            // Zombatars tab
+
             PopulatePlantList();
 
+            // Diagnostic: show how many plants were loaded
+            System.Diagnostics.Debug.WriteLine($"PopulateControls completed. ZenGardenPlants count: {user.ZenGardenPlants.Length}");
+            if (user.ZenGardenPlants.Length > 0)
+            {
+                for (int i = 0; i < user.ZenGardenPlants.Length; i++)
+                {
+                    System.Diagnostics.Debug.WriteLine($"  Plant[{i}]: {user.ZenGardenPlants[i]}");
+                }
+            }            
+            // Show diagnostic message
+            string plantMsg = $"Loaded {user.ZenGardenPlants.Length} plants from save file.";
+            if (user.ZenGardenPlants.Length > 0)
+            {
+                plantMsg += "\nPlants:\n";
+                for (int i = 0; i < Math.Min(5, user.ZenGardenPlants.Length); i++)
+                {
+                    plantMsg += $"  {i+1}. {user.ZenGardenPlants[i]}\n";
+                }
+                if (user.ZenGardenPlants.Length > 5)
+                    plantMsg += $"  ... and {user.ZenGardenPlants.Length - 5} more";
+            }
+            MessageBox.Show(this, plantMsg, "Plants Loaded", MessageBoxButtons.OK, MessageBoxIcon.Information);
             MarkChanged(false);
         }
 
@@ -464,6 +488,10 @@ namespace Plants_vs.Zombies_user_file_editor
 
             user.StinkyXPosition = (int)numericUpDownStinkyX.Value;
             user.StinkyYPosition = (int)numericUpDownStinkyY.Value;
+
+            // Zombatars tab
+            user.ZombatarLicense = checkBoxZombatarLicense.Checked ? (byte)1 : (byte)0;
+            user.NumberOfZombatars = (int)numericUpDownNumberOfZombatars.Value;
 
             try
             {
@@ -634,21 +662,28 @@ namespace Plants_vs.Zombies_user_file_editor
             var dialog = new OpenFileDialog();
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
-                using (var reader = new BinaryReader(new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read)))
+                try
                 {
-                    var version = reader.ReadUInt32();
-                    if (version != 0x0C)
+                    using (var reader = new BinaryReader(new FileStream(dialog.FileName, FileMode.Open, FileAccess.Read)))
                     {
-                        IncompatibleVersion();
-                    }
-                    ZenGardenPlant plant = new ZenGardenPlant();
-                    plant.Load(reader);
+                        var version = reader.ReadUInt32();
+                        if (version != 0x0C)
+                        {
+                            IncompatibleVersion();
+                        }
+                        ZenGardenPlant plant = new ZenGardenPlant();
+                        plant.Load(reader);
 
-                    var list = new List<ZenGardenPlant>(user.ZenGardenPlants);
-                    list.Add(plant);
-                    user.ZenGardenPlants = list.ToArray();
-                    MarkChanged(true);
-                    PopulatePlantList();
+                        var list = new List<ZenGardenPlant>(user.ZenGardenPlants);
+                        list.Add(plant);
+                        user.ZenGardenPlants = list.ToArray();
+                        MarkChanged(true);
+                        PopulatePlantList();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Unable to load plant from file: " + ex.Message, "Unable to load plant", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }           
         }
@@ -699,14 +734,30 @@ namespace Plants_vs.Zombies_user_file_editor
                 if (plant.PlantType == ZenGardenPlant.Marigold)
                 {
                     comboBoxColor.Enabled = true;
-                    comboBoxColor.SelectedIndex = plant.Color - 1;
+                    if (plant.Color >= 1 && plant.Color <= comboBoxColor.Items.Count)
+                    {
+                        comboBoxColor.SelectedIndex = plant.Color - 1;
+                    }
+                    else
+                    {
+                        comboBoxColor.SelectedIndex = 0;
+                    }
                 }
                 else
                 {
                     comboBoxColor.Enabled = false;
                     comboBoxColor.SelectedIndex = -1;
                 }
-                comboBoxGarden.SelectedIndex = plant.GardenLocation;
+                
+                if (plant.GardenLocation >= 0 && plant.GardenLocation < comboBoxGarden.Items.Count)
+                {
+                    comboBoxGarden.SelectedIndex = plant.GardenLocation;
+                }
+                else
+                {
+                    comboBoxGarden.SelectedIndex = 0;
+                }
+                
                 if (plant.GardenLocation != 0)
                 {
                     numericUpDownRow.Enabled = false;

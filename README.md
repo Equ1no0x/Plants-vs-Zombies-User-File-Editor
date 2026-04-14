@@ -1,27 +1,46 @@
-Plants vs. Zombies user file editor
-===================================
+# Plants vs. Zombies User File Editor
 
-The user file in Plants vs. Zombies contains data about your progress in the game, money,
-unlocked modes, trophies, achievements, purchased items, plants in your Zen Garden, and
-your Zombatars. By directly modifying the user file you can change any of these things,
-and do certain things that are either very difficult (like earning $999,990) or not
-possible in the game (like having Corn Cobs in your Zen Garden).
+The user file in *Plants vs. Zombies* stores your in-game progress and data, including:
 
-This tool (written in C# on Windows) makes it easy to modify the user file of the PC version
-of Plants vs. Zombies. This enables a variety of cheats. It automatically creates backups of
-your user file, so it is safe to use. It currently only supports a specific version of the
-user file format (version 12 or 0x0C) but more versions can be added in the future.
+- Money  
+- Unlocked modes  
+- Trophies  
+- Achievements  
+- Purchased items  
+- Zen Garden plants  
+- Zombatars  
 
-For details of the user file format used to create this tool and screenshots, see:
+By directly modifying this file, you can alter any of these elements. This allows for actions that are either very difficult (such as earning $999,990) or normally impossible within the game (such as placing Corn Cobs in your Zen Garden).
 
-http://plantsvszombies.wikia.com/wiki/User_File_Format
+This tool, written in C# for Windows, simplifies editing the user file for the PC version of *Plants vs. Zombies*. It enables a variety of modifications and automatically creates backups to ensure safe usage.
 
-Legal
-=====
-Plants vs. Zombies is a trademark of Popcap Games. This application is not created by
-and has no affiliation with Popcap Games. All rights to this application (source, binaries,
-and resources) are waived under the Creative Commons Zero Waiver. By using this application
-you agree to take responsibility for any damage it may do to your game or your system. The
-author waives all liability express or implied to the extent permitted by law.
+**Current limitation:**  
+- Supports user file format version 12 (`0x0C`) only
+- Additional versions may be supported in the future
+- Zombatars are not fully implemented
 
-Icon is Fiore 01 by Mauro Olivo from Open Clip Art Library.
+---
+
+## Resources
+
+- [Plants vs. Zombies User File Format](http://plantsvszombies.wikia.com/wiki/User_File_Format)  
+  Documentation explaining the structure and layout of the user file used by the game.
+
+- [Plants vs Zombies GOTY – User File Data Tables (Spreadsheet)](https://docs.google.com/spreadsheets/d/1qPM3ewsXjrsWsLithlv1uGHM8zXoOZjzJQA24MTwCYI/edit?usp=sharing)  
+  Created for my own reference. Contains user file addresses, offsets and possible values seperated by 'game sections'. Work in progress.
+
+---
+
+## Legal
+
+*Plants vs. Zombies* is a trademark of PopCap Games. This application is not created by, endorsed by, or affiliated with PopCap Games.
+
+All rights to this application (including source code, binaries, and resources) are waived under the Creative Commons Zero (CC0) Waiver.
+
+By using this application, you accept full responsibility for any potential damage to your game or system. The author disclaims all liability, express or implied, to the fullest extent permitted by law.
+
+---
+
+## Credits
+
+- Icon: *Fiore 01* by Mauro Olivo (Open Clip Art Library)

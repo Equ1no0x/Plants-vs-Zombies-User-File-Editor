@@ -237,6 +237,10 @@
             this.labelMarigold1PurchasedOn = new System.Windows.Forms.Label();
             this.dateTimePickerMarigold1 = new System.Windows.Forms.DateTimePicker();
             this.tabPageZombatars = new System.Windows.Forms.TabPage();
+            this.checkBoxZombatarLicense = new System.Windows.Forms.CheckBox();
+            this.labelZombatarLicense = new System.Windows.Forms.Label();
+            this.numericUpDownNumberOfZombatars = new System.Windows.Forms.NumericUpDown();
+            this.labelNumberOfZombatars = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.buttonSave = new System.Windows.Forms.Button();
             this.buttonReload = new System.Windows.Forms.Button();
@@ -282,6 +286,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTreeFood)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTreeOfWisdomHeight)).BeginInit();
             this.tabPageZombatars.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfZombatars)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
@@ -2204,6 +2209,7 @@
             // 
             // buttonSavePlant
             // 
+            this.buttonSavePlant.Enabled = true;
             this.buttonSavePlant.Location = new System.Drawing.Point(517, 408);
             this.buttonSavePlant.Name = "buttonSavePlant";
             this.buttonSavePlant.Size = new System.Drawing.Size(63, 23);
@@ -2214,6 +2220,7 @@
             // 
             // buttonLoadPlant
             // 
+            this.buttonLoadPlant.Enabled = true;
             this.buttonLoadPlant.Location = new System.Drawing.Point(448, 408);
             this.buttonLoadPlant.Name = "buttonLoadPlant";
             this.buttonLoadPlant.Size = new System.Drawing.Size(65, 23);
@@ -2714,7 +2721,11 @@
             this.dateTimePickerMarigold1.ValueChanged += new System.EventHandler(this.somethingChanged);
             // 
             // tabPageZombatars
-            // 
+            //
+            this.tabPageZombatars.Controls.Add(this.numericUpDownNumberOfZombatars);
+            this.tabPageZombatars.Controls.Add(this.labelNumberOfZombatars);
+            this.tabPageZombatars.Controls.Add(this.checkBoxZombatarLicense);
+            this.tabPageZombatars.Controls.Add(this.labelZombatarLicense);
             this.tabPageZombatars.Controls.Add(this.label44);
             this.tabPageZombatars.Location = new System.Drawing.Point(4, 22);
             this.tabPageZombatars.Name = "tabPageZombatars";
@@ -2722,6 +2733,42 @@
             this.tabPageZombatars.TabIndex = 2;
             this.tabPageZombatars.Text = "Zombatars";
             this.tabPageZombatars.UseVisualStyleBackColor = true;
+            //
+            // labelZombatarLicense
+            //
+            this.labelZombatarLicense.AutoSize = true;
+            this.labelZombatarLicense.Location = new System.Drawing.Point(4, 40);
+            this.labelZombatarLicense.Name = "labelZombatarLicense";
+            this.labelZombatarLicense.Size = new System.Drawing.Size(114, 13);
+            this.labelZombatarLicense.TabIndex = 1;
+            this.labelZombatarLicense.Text = "License Accepted:";
+            //
+            // checkBoxZombatarLicense
+            //
+            this.checkBoxZombatarLicense.AutoSize = true;
+            this.checkBoxZombatarLicense.Location = new System.Drawing.Point(120, 40);
+            this.checkBoxZombatarLicense.Name = "checkBoxZombatarLicense";
+            this.checkBoxZombatarLicense.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxZombatarLicense.TabIndex = 2;
+            this.checkBoxZombatarLicense.UseVisualStyleBackColor = true;
+            this.checkBoxZombatarLicense.CheckedChanged += new System.EventHandler(this.somethingChanged);
+            //
+            // labelNumberOfZombatars
+            //
+            this.labelNumberOfZombatars.AutoSize = true;
+            this.labelNumberOfZombatars.Location = new System.Drawing.Point(4, 62);
+            this.labelNumberOfZombatars.Name = "labelNumberOfZombatars";
+            this.labelNumberOfZombatars.Size = new System.Drawing.Size(116, 13);
+            this.labelNumberOfZombatars.TabIndex = 3;
+            this.labelNumberOfZombatars.Text = "Number of Zombatars:";
+            //
+            // numericUpDownNumberOfZombatars
+            //
+            this.numericUpDownNumberOfZombatars.Location = new System.Drawing.Point(120, 60);
+            this.numericUpDownNumberOfZombatars.Name = "numericUpDownNumberOfZombatars";
+            this.numericUpDownNumberOfZombatars.Size = new System.Drawing.Size(75, 20);
+            this.numericUpDownNumberOfZombatars.TabIndex = 4;
+            this.numericUpDownNumberOfZombatars.ValueChanged += new System.EventHandler(this.somethingChanged);
             // 
             // label44
             // 
@@ -2730,8 +2777,7 @@
             this.label44.Name = "label44";
             this.label44.Size = new System.Drawing.Size(382, 13);
             this.label44.TabIndex = 0;
-            this.label44.Text = "Editing Zombatars is not yet available. Any existing Zombatars will be preserved." +
-    "";
+            this.label44.Text = "Editing Zombatars is not supported. Existing Zombatars will be preserved.";
             // 
             // buttonSave
             // 
@@ -2787,7 +2833,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Plants vs. Zombies user file editor - version 0.1";
+            this.Text = "Plants vs. Zombies User File Editor - Version 0.2.1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.tabControl.ResumeLayout(false);
@@ -2838,6 +2884,7 @@
             this.groupBoxTreeOfWisdom.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTreeFood)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTreeOfWisdomHeight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNumberOfZombatars)).EndInit();
             this.tabPageZombatars.ResumeLayout(false);
             this.tabPageZombatars.PerformLayout();
             this.ResumeLayout(false);
@@ -2851,6 +2898,10 @@
         private System.Windows.Forms.TextBox textBoxPlayerName;
         private System.Windows.Forms.Label labelPlayerName;
         private System.Windows.Forms.TabPage tabPageZenGarden;
+        private System.Windows.Forms.CheckBox checkBoxZombatarLicense;
+        private System.Windows.Forms.Label labelZombatarLicense;
+        private System.Windows.Forms.NumericUpDown numericUpDownNumberOfZombatars;
+        private System.Windows.Forms.Label labelNumberOfZombatars;
         private System.Windows.Forms.TabPage tabPageZombatars;
         private System.Windows.Forms.ComboBox comboBoxAdventureModeLevel;
         private System.Windows.Forms.Label labelLevel;

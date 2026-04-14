@@ -151,23 +151,98 @@ namespace Plants_vs.Zombies_user_file_editor
 
         public void Load(BinaryReader reader)
         {
-            PlantType = reader.ReadInt32();
-            GardenLocation = reader.ReadInt32();
-            Column = reader.ReadInt32();
-            Row = reader.ReadInt32();
-            IOUtils.ReadUInt32Array(reader, unknown1);
-            LastWateringTime = IOUtils.ReadUnixTimestamp(reader);
-            unknown2 = reader.ReadUInt32();
-            Color = reader.ReadInt32();
-            NumTimesFertilized = reader.ReadInt32();
-            NumTimesWatered = reader.ReadInt32();
-            unknown3 = reader.ReadUInt32();
-            NeedsPhonographOrBugSpray = (ZenGardenPlantNeeds)reader.ReadInt32();
-            unknown4 = reader.ReadUInt32();
-            LastPhonographOrBugSprayTime = IOUtils.ReadUnixTimestamp(reader);
-            unknown5 = reader.ReadUInt32();
-            LastFertilizerTime = IOUtils.ReadUnixTimestamp(reader);
-            IOUtils.ReadUInt32Array(reader, unknown6);
+            long startPos = reader.BaseStream.Position;
+            
+            try
+            {
+                PlantType = reader.ReadInt32();
+                GardenLocation = reader.ReadInt32();
+                Column = reader.ReadInt32();
+                Row = reader.ReadInt32();
+                IOUtils.ReadUInt32Array(reader, unknown1);
+                LastWateringTime = IOUtils.ReadUnixTimestamp(reader);
+                unknown2 = reader.ReadUInt32();
+                Color = reader.ReadInt32();
+                NumTimesFertilized = reader.ReadInt32();
+                NumTimesWatered = reader.ReadInt32();
+                unknown3 = reader.ReadUInt32();
+                NeedsPhonographOrBugSpray = (ZenGardenPlantNeeds)reader.ReadInt32();
+                unknown4 = reader.ReadUInt32();
+                LastPhonographOrBugSprayTime = IOUtils.ReadUnixTimestamp(reader);
+                unknown5 = reader.ReadUInt32();
+                LastFertilizerTime = IOUtils.ReadUnixTimestamp(reader);
+                IOUtils.ReadUInt32Array(reader, unknown6);
+                
+                // Validate after reading all data
+                if (PlantType < 0 || PlantType > 53)
+                {
+                    System.Diagnostics.Debug.WriteLine($"warning: Invalid PlantType: {PlantType} at file position 0x{startPos:X}. Using default.");
+                    PlantType = Marigold;
+                }
+                if (GardenLocation < 0 || GardenLocation > 3)
+                {
+                    System.Diagnostics.Debug.WriteLine($"warning: Invalid GardenLocation: {GardenLocation} at file position 0x{startPos:X}. Using default.");
+                    GardenLocation = 0;
+                }
+            }
+            catch (EndOfStreamException ex)
+            {
+                // File is truncated - reset to defaults, don't re-throw
+                System.Diagnostics.Debug.WriteLine($"warning: File truncated while reading plant at position 0x{startPos:X}. Using default plant.");
+                System.Diagnostics.Debug.WriteLine($"  EndOfStreamException: {ex.Message}");
+                PlantType = Marigold;
+                Color = 2;
+                GardenLocation = 0;
+                Row = 0;
+                Column = 0;
+                
+                // Try to advance reader to end of plant structure (88 bytes)
+                long bytesRead = reader.BaseStream.Position - startPos;
+                long bytesToSkip = 88 - bytesRead;
+                System.Diagnostics.Debug.WriteLine($"  Bytes read: {bytesRead}, bytes to skip: {bytesToSkip}");
+                if (bytesToSkip > 0 && bytesToSkip < 88)
+                {
+                    try
+                    {
+                        reader.ReadBytes((int)bytesToSkip);
+                        System.Diagnostics.Debug.WriteLine($"  Successfully skipped to next plant");
+                    }
+                    catch (Exception skipEx)
+                    {
+                        // Can't skip, file is too truncated
+                        System.Diagnostics.Debug.WriteLine($"  Failed to skip: {skipEx.Message}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Other errors - try to recover by advancing to next plant
+                System.Diagnostics.Debug.WriteLine($"warning: Error reading plant at position 0x{startPos:X}: {ex.GetType().Name}: {ex.Message}");
+                PlantType = Marigold;
+                Color = 2;
+                GardenLocation = 0;
+                Row = 0;
+                Column = 0;
+                
+                // Try to advance reader to end of plant structure (88 bytes)
+                long bytesRead = reader.BaseStream.Position - startPos;
+                long bytesToSkip = 88 - bytesRead;
+                System.Diagnostics.Debug.WriteLine($"  Bytes read: {bytesRead}, bytes to skip: {bytesToSkip}");
+                if (bytesToSkip > 0 && bytesToSkip < 88)
+                {
+                    try
+                    {
+                        reader.ReadBytes((int)bytesToSkip);
+                        System.Diagnostics.Debug.WriteLine($"  Successfully skipped to next plant");
+                    }
+                    catch (Exception skipEx)
+                    {
+                        // Can't skip, re-throw to stop loading
+                        System.Diagnostics.Debug.WriteLine($"  Failed to skip: {skipEx.Message}, stopping plant load");
+                        throw;
+                    }
+                }
+            }
         }
 
         public void Save(BinaryWriter writer)
@@ -194,20 +269,45 @@ namespace Plants_vs.Zombies_user_file_editor
         public override string ToString()
         {
             string result = "";
-            if (PlantType == Marigold)
+            try
             {
-                result += ColorNames[Color] + " ";
+                if (PlantType == Marigold && Color >= 0 && Color < ColorNames.Length)
+                {
+                    result += ColorNames[Color] + " ";
+                }
+                if (PlantType >= 0 && PlantType < PlantTypeNames.Length)
+                {
+                    result += PlantTypeNames[PlantType] + " at ";
+                }
+                else
+                {
+                    result += "(Unknown Plant) at ";
+                }
+                
+                if (GardenLocation >= 0 && GardenLocation < GardenNames.Length)
+                {
+                    result += GardenNames[GardenLocation];
+                }
+                else
+                {
+                    result += "(Unknown Location)";
+                }
+                
+                result += ", ";
+                if (GardenLocation == 0)
+                {
+                    result += "(" + (Row + 1) + "," + (Column + 1) + ")";
+                }
+                else
+                {
+                    result += (Column + 1);
+                }
+                return result;
             }
-            result += PlantTypeNames[PlantType] + " at " + GardenNames[GardenLocation] + ", ";
-            if (GardenLocation == 0)
+            catch (Exception ex)
             {
-                result += "(" + (Row + 1) + "," + (Column + 1) + ")";
+                return $"(Error: {ex.Message})";
             }
-            else
-            {
-                result += (Column + 1);
-            }
-            return result;
         }
     }
 }
